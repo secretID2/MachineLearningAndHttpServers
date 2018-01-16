@@ -24,6 +24,7 @@
 <button onclick="move()">Click Me</button> 
 
 <script>
+var interval=null;
 document.onload(repeatHttpRequest());
 function move() {
   var elem = document.getElementById("myBar");   
@@ -40,7 +41,7 @@ function move() {
 }
 //repeat loadDoc function
 function repeatHttpRequest(){
-	var id = setInterval(loadDoc, 10);
+	 interval = setInterval(loadDoc, 10);
 	function loadDoc() {
 
 	  var xhttp = new XMLHttpRequest();
@@ -49,7 +50,7 @@ function repeatHttpRequest(){
 			var elem = document.getElementById("myBar");
 			elem.style.width= this.response;
 			if(this.response.equals("100%"))
-				clearInterval(id);
+				clearInterval(interval);
 		}
 	  };
 	  xhttp.open("GET", "How_it_is_going", true);

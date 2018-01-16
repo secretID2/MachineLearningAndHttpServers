@@ -86,6 +86,7 @@ def do_upload():
 def GetPredictor():
    global i
    if(i>=100):
+       #redirect after
        return str(i)+'%'
    i+=1
    return str(i)+'%'
