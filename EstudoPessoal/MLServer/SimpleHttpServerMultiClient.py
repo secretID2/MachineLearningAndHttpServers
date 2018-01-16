@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jan  8 15:05:42 2018
+Created on Tue Jan 16 15:42:39 2018
 
 @author: lcristovao
 """
 
 
+
 import bottle as bt
 import pandas as pd
 import numpy as np
-import threading
-#import wsgiserver
-#@bt.route('/')
-#@bt.route('/hello/<name>')
-#def greet(name='Stranger'):
-#    return bt.template('Hello {{name}}, how are you?', name=name)
+import os
+import time
 
+i=0
 username=''
 password=''
 
@@ -66,9 +64,33 @@ def restricted_area():
     
     #if check_login(key[0], key[1]):
     if key:
-        return bt.static_file("index.html",root="files/Template")
+        return bt.static_file("upload_dataset.html",root="files/Template")
     else:
         return "You are not logged in. Access denied."
+    
+    
+    
+@bt.get('/upload', method='POST')
+def do_upload():
+    upload     = bt.request.files.get('upload')
+    name, ext = os.path.splitext(upload.filename)
+    #if ext not in ('.png','.jpg','.jpeg'):
+        #return 'File extension not allowed.'
+
+    #save_path = get_save_path_for_category(category)
+    save_path='files/Template'
+    upload.save(save_path) # appends upload.filename automatically
+    return bt.redirect('/LoadingPredictor.html')
+
+@bt.get('/How_it_is_going')
+def GetPredictor():
+   global i
+   if(i>=100):
+       return str(i)+'%'
+   i+=1
+   return str(i)+'%'
+        
+    
 
 @bt.get('/<filepath:path>')
 def server_static(filepath):
@@ -81,5 +103,4 @@ def server_static(filepath):
         return "You are not logged in. Access denied."
 
 
-bt.run(host='localhost', port=80,server='paste')
-#threading.Thread(target=bt.run, kwargs=dict(host='localhost', port=80)).start()
+bt.run(host='localhost', port=80, server='paste')

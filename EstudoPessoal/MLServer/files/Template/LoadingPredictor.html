@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<style>
+#myProgress {
+  width: 100%;
+  background-color: #ddd;
+}
+
+#myBar {
+  width: 1%;
+  height: 30px;
+  background-color: #4CAF50;
+}
+</style>
+<body>
+
+<h1>Loading a Predictor</h1>
+
+<div id="myProgress">
+  <div id="myBar"></div>
+</div>
+
+<br>
+<button onclick="move()">Click Me</button> 
+
+<script>
+document.onload(repeatHttpRequest());
+function move() {
+  var elem = document.getElementById("myBar");   
+  var width = 1;
+  var id = setInterval(frame, 10);
+  function frame() {
+    if (width >= 100) {
+      clearInterval(id);
+    } else {
+      width++; 
+      elem.style.width = width + '%'; 
+    }
+  }
+}
+//repeat loadDoc function
+function repeatHttpRequest(){
+	var id = setInterval(loadDoc, 10);
+	function loadDoc() {
+
+	  var xhttp = new XMLHttpRequest();
+	  xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var elem = document.getElementById("myBar");
+			elem.style.width= this.response;
+			if(this.response.equals("100%"))
+				clearInterval(id);
+		}
+	  };
+	  xhttp.open("GET", "How_it_is_going", true);
+	  xhttp.send();
+	}
+}
+
+
+
+
+</script>
+
+</body>
+</html>
