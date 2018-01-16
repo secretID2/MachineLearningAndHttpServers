@@ -54,8 +54,8 @@ def ReturnPredictor(dataset,true_test_size=0.5,validation_size=0.20,cross_val_sp
     
     
      #Turn all columns that have string categorical values to numbers
-    dataset=TurnDatasetToNumeric(dataset)
-    print(dataset.head)
+    dataset.iloc[:,:-1]=TurnDatasetToNumeric(dataset.iloc[:,:-1])
+    #print(dataset.head)
     
     #Divide dataset in two parts
     size=dataset.shape[0]
