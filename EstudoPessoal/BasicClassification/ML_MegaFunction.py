@@ -53,7 +53,7 @@ def ReturnPredictor(dataset,true_test_size=0.5,validation_size=0.20,cross_val_sp
     dataset=dataset.sample(frac=1,random_state=seed)
     
     
-     #Turn all columns that have string categorical values to numbers
+     #Turn all columns of atributes that have string categorical values to numbers
     dataset.iloc[:,:-1]=TurnDatasetToNumeric(dataset.iloc[:,:-1])
     #print(dataset.head)
     
