@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>The XMLHttpRequest Object</h1>
+
+<button type="button" onclick="loadDoc()">Request data</button>
+
+<p id="demo"></p>
+<canvas id="image_demo"></canvas>
+<script>
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("demo").innerHTML = this.response;
+	  /*
+	  canvas=document.getElementById("image_demo");
+	  ctx=canvas.getContext('2d');
+	  for(i=0;i<canvas.width;i++){
+		for(j=0;j<canvas.height;j++)
+			//ctx.drawImage(i+j,i,j)
+			//ctx.fillStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+			//ctx.fillRect( x, y, 1, 1 );
+			ctx.fillStyle="rgba("+i+","+j+","+((i+j)%255)+",255)"
+			ctx.fillRect( i, j, 1, 1 );
+	  }
+	  //ctx.drawImage(this.response, 0, 0);
+	  */
+    }
+  };
+  xhttp.open("GET", "Ola", true);
+  xhttp.send();
+}
+</script>
+ 
+</body>
+</html>
