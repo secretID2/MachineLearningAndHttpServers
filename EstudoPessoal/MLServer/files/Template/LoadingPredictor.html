@@ -15,7 +15,7 @@
 <body>
 
 <h1>Loading a Predictor</h1>
-
+<h2 id="start"></h2>
 <div id="myProgress">
   <div id="myBar"></div>
 </div>
@@ -25,7 +25,9 @@
 
 <script>
 var interval=null;
-document.onload(repeatHttpRequest());
+document.onload(Start());
+
+
 function move() {
   var elem = document.getElementById("myBar");   
   var width = 1;
@@ -41,7 +43,7 @@ function move() {
 }
 //repeat loadDoc function
 function repeatHttpRequest(){
-	 interval = setInterval(loadDoc, 10);
+	interval = setInterval(loadDoc, 10);
 	function loadDoc() {
 
 	  var xhttp = new XMLHttpRequest();
@@ -58,7 +60,22 @@ function repeatHttpRequest(){
 	}
 }
 
+function Start(){
+	
 
+	  var xhttp = new XMLHttpRequest();
+	  xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			document.getElementById("start").innerHTML=this.response;
+			
+		}
+	  };
+	  xhttp.open("GET", "start", true);
+	  xhttp.send();
+	  
+	  repeatHttpRequest();
+	
+}
 
 
 </script>
