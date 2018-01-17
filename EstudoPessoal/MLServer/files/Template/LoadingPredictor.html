@@ -25,6 +25,7 @@
 
 <script>
 var interval=null;
+var username=null;
 document.onload=Start();
 
 function compareStrings(st1,st2){
@@ -64,10 +65,16 @@ function repeatHttpRequest(){
 	  var xhttp = new XMLHttpRequest();
 	  xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			var elem = document.getElementById("myBar");
-			elem.style.width= this.response;
-			if(compareStrings(this.response,"100%"))
-				clearInterval(interval);
+			var response= this.response;
+			user=response.split(' ')[0];
+			progress=response.split(' ')[1];
+			if(compareStrings(user,username)){
+				var elem = document.getElementById("myBar");
+				elem.style.width= progress;
+				console.log(user+' '+progress)
+				if(compareStrings(progress,"100%"))
+					clearInterval(interval);
+			}
 		}
 	  };
 	  xhttp.open("GET", "How_it_is_going", true);
@@ -76,20 +83,23 @@ function repeatHttpRequest(){
 }
 
 function Start(){
-	
-
-	  var xhttp = new XMLHttpRequest();
-	  xhttp.onreadystatechange = function() {
+		
+		
+	//console.log(document.cookie)
+	username=document.cookie.split('=')[0];	
+	console.log(username);
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			document.getElementById("start").innerHTML=this.response;
-			
+		
 		}
-	  };
-	  xhttp.open("GET", "start", true);
-	  xhttp.send();
-	  
-	  repeatHttpRequest();
-	
+	};
+	xhttp.open("GET", "start", true);
+	xhttp.send();
+
+	repeatHttpRequest();
+
 }
 
 

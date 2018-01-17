@@ -159,7 +159,7 @@ def Loading():
 #                return clients[c].p.loading
 #            else:
 #                return bt.redirect("/Predictor.html")
-            return clients[c].p.loading
+            return c+" "+clients[c].p.loading
     
     return "You are not logged in. Access denied."
         
