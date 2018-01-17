@@ -13,6 +13,7 @@ import numpy as np
 import os
 import time
 import ML_MegaFunction as ml
+import threading
 
 i=0
 username=''
@@ -22,6 +23,8 @@ secret='some-secret-key'
 
 
 clients={}
+clients_upload_threads={}
+clients_run_threads={}
 class Client:
     
     p=ml.Predictor()
@@ -35,7 +38,16 @@ class Client:
         
     def Loading(self):
         return self.p.loading
-
+    
+    def uploadFile(self,save_path):
+        upload = bt.request.files.get('upload')
+        name, ext = os.path.splitext(upload.filename)
+    
+        #save_path='files/Template'
+        upload.save(save_path, overwrite=True) # appends upload.filename automatically
+        print("\n\nbefore\n\n")
+        self.dataset=pd.read_csv(save_path+upload.filename)
+        print("\n\nAfter\n\n")
 
 def getUsers():
    data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
@@ -50,6 +62,9 @@ def validate_user(secret):
             return True
     return False
 
+
+
+#_______Main___________________________
 
 Users=getUsers()
 print(Users)
@@ -101,16 +116,17 @@ def restricted_area():
 def do_upload():
     global clients
     global secret
+    global clients_upload_threads
     for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            upload = bt.request.files.get('upload')
-            name, ext = os.path.splitext(upload.filename)
-    
-            save_path='files/Template'
-            upload.save(save_path) # appends upload.filename automatically
-            clients[c].dataset=pd.read_csv(upload.filepath_or_buffer)
+            newpath = r'files/Template/'+c+'/' 
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+            t=threading.Thread(target=clients[c].uploadFile(newpath))
+            clients_upload_threads[c]=t
+            t.start()
             return bt.redirect('/LoadingPredictor.html')
         
     return "You are not logged in. Access denied."
@@ -119,12 +135,15 @@ def do_upload():
 @bt.get('/start')
 def GetPredictor():
     global clients
+    global clients_run_threads
     for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #Valid User
             #client_username=c #=clients[c].username #
-            clients[c].Run()
+            t=threading.Thread(target=clients[c].Run)
+            clients_run_threads[c]=t
+            t.start()
             return "Started the Proccess!"
             
     return "You are not logged in. Access denied."
@@ -136,6 +155,10 @@ def Loading():
         if key:
             #Valid User
             #client_username=c #=clients[c].username #
+#            if(clients[c].p.loading!="100%"):
+#                return clients[c].p.loading
+#            else:
+#                return bt.redirect("/Predictor.html")
             return clients[c].p.loading
     
     return "You are not logged in. Access denied."
