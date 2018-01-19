@@ -29,6 +29,7 @@ class Client:
     
     p=ml.Predictor()
     dataset=None 
+    predictor=None
     def __init__(self,username,password):
         self.username=username
         self.password=password
@@ -156,13 +157,48 @@ def Loading():
             #Valid User
             #client_username=c #=clients[c].username #
 #            if(clients[c].p.loading!="100%"):
-#                return clients[c].p.loading
+#                return clients[c].username+' '+clients[c].p.loading
 #            else:
-#                return bt.redirect("/Predictor.html")
-            return c+" "+clients[c].p.loading
+#                return bt.redirect('/Predictor.html')
+            return clients[c].p.loading
     
     return "You are not logged in. Access denied."
         
+#values=dataset.values
+#np.random.shuffle(values)
+##Number of tests
+#n=10
+#print("Original values:\n",values[:n,:])
+#for i in range(n):
+#    print("Prediction for previous line:\n",values[i,:-1],"->",best_model.predict(values[:n,:-1])[i])
+
+
+@bt.get('/Prediction')
+def Predictor():
+     global clients
+     global clients_run_threads
+     for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #clients_run_threads[c].remove()
+            client=clients[c]
+            data=client.dataset
+            p=client.predictor
+            values=data.values
+            np.random.shuffle(values)
+            #Number of tests
+            n=10
+            output="Original values:<br>"
+            output+=np.array_str(values[:n,:])
+            output+="<br><br>"
+            #print("Original values:\n",values[:n,:])
+            for i in range(n):
+                output+="<br>Prediction for previous line:<br>"+np.array_str(values[i,:-1])+"->"+np.array_str(p.predict(values[:n,:-1])[i])
+            print (output)
+            print('\n\nend!!!!\n\n')
+            return output
+            
+
     
 
 @bt.get('/<filepath:path>')

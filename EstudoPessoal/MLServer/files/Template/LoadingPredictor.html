@@ -59,25 +59,31 @@ function move() {
 }
 //repeat loadDoc function
 function repeatHttpRequest(){
-	interval = setInterval(loadDoc, 10);
+	interval = setInterval(loadDoc, 50);
+	var out="How_it_is_going";
 	function loadDoc() {
 
 	  var xhttp = new XMLHttpRequest();
 	  xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response= this.response;
-			user=response.split(' ')[0];
-			progress=response.split(' ')[1];
-			if(compareStrings(user,username)){
-				var elem = document.getElementById("myBar");
-				elem.style.width= progress;
-				console.log(user+' '+progress)
-				if(compareStrings(progress,"100%"))
-					clearInterval(interval);
-			}
+			console.log('response->'+response);
+			//user=response.split(' ')[0];
+			//progress=response.split(' ')[1];
+			//console.log(user+'->'+progress);
+			//if(compareStrings(user,username)){
+			var elem = document.getElementById("myBar");
+			elem.style.width= response;
+			//console.log(user+' '+progress)
+			if(compareStrings(response,"100%"))
+				clearInterval(interval);
+				document.getElementById("start").innerHTML="Done!"
+				out="Predictor.html";
+				window.location.replace("http://localhost/Predictor.html");
+			//}
 		}
 	  };
-	  xhttp.open("GET", "How_it_is_going", true);
+	  xhttp.open("GET", out, true);
 	  xhttp.send();
 	}
 }
