@@ -39,15 +39,20 @@ class Client:
     def Loading(self):
         return self.p.loading
     
-    def uploadFile(self,save_path):
+    def uploadFile(self,save_path,split_caracter=','):
         upload = bt.request.files.get('upload')
         name, ext = os.path.splitext(upload.filename)
     
         #save_path='files/Template'
         upload.save(save_path, overwrite=True) # appends upload.filename automatically
         print("\n\nbefore\n\n")
-        self.dataset=pd.read_csv(save_path+upload.filename)
+        self.dataset=pd.read_csv(save_path+upload.filename,delimiter=split_caracter )
         print("\n\nAfter\n\n")
+        
+        
+    def getDatasetFromUrl(self,url,split_caracter=','):
+        self.dataset=pd.read_csv(url,sep=split_caracter)
+        
 
 def getUsers():
    data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
@@ -121,12 +126,22 @@ def do_upload():
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            newpath = r'files/Template/'+c+'/' 
-            if not os.path.exists(newpath):
-                os.makedirs(newpath)
-            t=threading.Thread(target=clients[c].uploadFile(newpath))
-            clients_upload_threads[c]=t
-            t.start()
+            split = bt.request.forms.get('split')
+            url=''
+            url = bt.request.forms.get('url')
+            print(split,url)
+            if(url!=''):
+                t=threading.Thread(target=clients[c].getDatasetFromUrl(url,split_caracter=split))
+                clients_upload_threads[c]=t
+                t.start()
+            else:
+                newpath = r'files/Template/'+c+'/' 
+                if not os.path.exists(newpath):
+                    os.makedirs(newpath)
+                t=threading.Thread(target=clients[c].uploadFile(newpath,split_caracter=split))
+                clients_upload_threads[c]=t
+                t.start()
+                
             return bt.redirect('/LoadingPredictor.html')
         
     return "You are not logged in. Access denied."
