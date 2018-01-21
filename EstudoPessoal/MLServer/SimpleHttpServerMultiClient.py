@@ -178,7 +178,30 @@ def Loading():
     
     return "You are not logged in. Access denied."
         
-    
+@bt.get('/Prediction')
+def Predictor():
+     global clients
+     global clients_run_threads
+     for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #clients_run_threads[c].remove()
+            client=clients[c]
+            data=client.dataset
+            p=client.predictor
+            values=data.values
+            np.random.shuffle(values)
+            #Number of tests
+            n=10
+            output="Original values:<br>"
+            output+=np.array_str(values[:n,:])
+            output+="<br><br>"
+            #print("Original values:\n",values[:n,:])
+            for i in range(n):
+                output+="<br>Prediction for previous line:<br>"+np.array_str(values[i,:-1])+"->"+np.array_str(p.predict(values[:n,:-1])[i])
+            print (output)
+            print('\n\nend!!!!\n\n')
+            return output    
 
 @bt.get('/<filepath:path>')
 def server_static(filepath):
