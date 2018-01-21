@@ -29,7 +29,6 @@ class Client:
     
     p=ml.Predictor()
     dataset=None 
-    predictor=None
     def __init__(self,username,password):
         self.username=username
         self.password=password
@@ -40,15 +39,20 @@ class Client:
     def Loading(self):
         return self.p.loading
     
-    def uploadFile(self,save_path):
+    def uploadFile(self,save_path,split_caracter=','):
         upload = bt.request.files.get('upload')
         name, ext = os.path.splitext(upload.filename)
     
         #save_path='files/Template'
         upload.save(save_path, overwrite=True) # appends upload.filename automatically
         print("\n\nbefore\n\n")
-        self.dataset=pd.read_csv(save_path+upload.filename)
+        self.dataset=pd.read_csv(save_path+upload.filename,delimiter=split_caracter )
         print("\n\nAfter\n\n")
+        
+        
+    def getDatasetFromUrl(self,url,split_caracter=','):
+        self.dataset=pd.read_csv(url,sep=split_caracter)
+        
 
 def getUsers():
    data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
@@ -122,12 +126,22 @@ def do_upload():
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            newpath = r'files/Template/'+c+'/' 
-            if not os.path.exists(newpath):
-                os.makedirs(newpath)
-            t=threading.Thread(target=clients[c].uploadFile(newpath))
-            clients_upload_threads[c]=t
-            t.start()
+            split = bt.request.forms.get('split')
+            url=''
+            url = bt.request.forms.get('url')
+            print(split,url)
+            if(url!=''):
+                t=threading.Thread(target=clients[c].getDatasetFromUrl(url,split_caracter=split))
+                clients_upload_threads[c]=t
+                t.start()
+            else:
+                newpath = r'files/Template/'+c+'/' 
+                if not os.path.exists(newpath):
+                    os.makedirs(newpath)
+                t=threading.Thread(target=clients[c].uploadFile(newpath,split_caracter=split))
+                clients_upload_threads[c]=t
+                t.start()
+                
             return bt.redirect('/LoadingPredictor.html')
         
     return "You are not logged in. Access denied."
@@ -157,48 +171,13 @@ def Loading():
             #Valid User
             #client_username=c #=clients[c].username #
 #            if(clients[c].p.loading!="100%"):
-#                return clients[c].username+' '+clients[c].p.loading
+#                return clients[c].p.loading
 #            else:
-#                return bt.redirect('/Predictor.html')
+#                return bt.redirect("/Predictor.html")
             return clients[c].p.loading
     
     return "You are not logged in. Access denied."
         
-#values=dataset.values
-#np.random.shuffle(values)
-##Number of tests
-#n=10
-#print("Original values:\n",values[:n,:])
-#for i in range(n):
-#    print("Prediction for previous line:\n",values[i,:-1],"->",best_model.predict(values[:n,:-1])[i])
-
-
-@bt.get('/Prediction')
-def Predictor():
-     global clients
-     global clients_run_threads
-     for c in clients:
-        key = bt.request.get_cookie(clients[c].username, secret=secret)
-        if key:
-            #clients_run_threads[c].remove()
-            client=clients[c]
-            data=client.dataset
-            p=client.predictor
-            values=data.values
-            np.random.shuffle(values)
-            #Number of tests
-            n=10
-            output="Original values:<br>"
-            output+=np.array_str(values[:n,:])
-            output+="<br><br>"
-            #print("Original values:\n",values[:n,:])
-            for i in range(n):
-                output+="<br>Prediction for previous line:<br>"+np.array_str(values[i,:-1])+"->"+np.array_str(p.predict(values[:n,:-1])[i])
-            print (output)
-            print('\n\nend!!!!\n\n')
-            return output
-            
-
     
 
 @bt.get('/<filepath:path>')
