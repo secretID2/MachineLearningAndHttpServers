@@ -64,7 +64,7 @@ def accessRoom():
     global chatRooms
     roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
-    #print(chatRooms[roomName])
+    print(roomName)
     if password==chatRooms[roomName]:
         bt.response.set_cookie(roomName, password, secret=secret)
         return bt.redirect('/'+roomName)
@@ -94,7 +94,8 @@ def chat(ws):
     if(ws!=None):
         for room_name in chatRooms:
             key = bt.request.get_cookie(room_name, secret=secret)
-            
+            if key:
+                break
             #if key==chatRooms[room_name]:
                 #Valid user
                 #print('pass here')
