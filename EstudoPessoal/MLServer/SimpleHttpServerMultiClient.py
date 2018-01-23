@@ -188,19 +188,30 @@ def Predictor():
             #clients_run_threads[c].remove()
             client=clients[c]
             data=client.dataset
+            ml_instance=client.p
             p=client.predictor
-            values=data.values
-            np.random.shuffle(values)
-            #Number of tests
+            data.iloc[:,:-1]=ml_instance.TurnDatasetToNumeric(data.iloc[:,:-1])
+            data=data.sample(frac=1)
             n=10
             output="Original values:<br>"
-            output+=np.array_str(values[:n,:])
+            output+=np.array_str(data.iloc[:n,:].values)
             output+="<br><br>"
             #print("Original values:\n",values[:n,:])
             for i in range(n):
-                output+="<br>Prediction for previous line:<br>"+np.array_str(values[i,:-1])+"->"+np.array_str(p.predict(values[:n,:-1])[i])
-            print (output)
-            print('\n\nend!!!!\n\n')
+                output+="<br>Prediction for previous line:<br>"+np.array_str(data.iloc[i,:-1].values)+"->"+np.array_str(p.predict(data.iloc[i:i+1,:-1].values))
+
+#            values=data.values
+#            np.random.shuffle(values)
+#            #Number of tests
+#            n=10
+#            output="Original values:<br>"
+#            output+=np.array_str(values[:n,:])
+#            output+="<br><br>"
+#            #print("Original values:\n",values[:n,:])
+#            for i in range(n):
+#                output+="<br>Prediction for previous line:<br>"+np.array_str(values[i,:-1])+"->"+np.array_str(p.predict(values[:n,:-1])[i])
+#            print (output)
+#            print('\n\nend!!!!\n\n')
             return output    
 
 @bt.get('/<filepath:path>')

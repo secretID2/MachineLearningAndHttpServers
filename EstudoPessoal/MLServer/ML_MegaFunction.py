@@ -30,11 +30,12 @@ from sklearn import preprocessing
 class Predictor:
     
     loading=str(0)+'%'
-    
+    @staticmethod
     def categoricalToNumeric(array):
         le = preprocessing.LabelEncoder()
         le.fit(array)
         return le.transform(array)
+    
     
     def TurnDatasetToNumeric(self,dataset):
         
