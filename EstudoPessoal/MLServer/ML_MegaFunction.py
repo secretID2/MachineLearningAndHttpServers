@@ -30,6 +30,7 @@ from sklearn import preprocessing
 class Predictor:
     
     loading=str(0)+'%'
+    score=0
     @staticmethod
     def categoricalToNumeric(array):
         le = preprocessing.LabelEncoder()
@@ -126,7 +127,8 @@ class Predictor:
         FFX=FFArray[:,0:class_index]
         FFY=FFArray[:,class_index]
         predictions = best_model.predict(FFX)
-        print('\n\nFinal Final Score: ',accuracy_score(FFY, predictions))
+        self.score=accuracy_score(FFY, predictions)
+        print('\n\nFinal Final Score: ',self.score)
         print('Confusion matrix\n',confusion_matrix(FFY, predictions))
         self.loading=str(100)+'%'
         return best_model
