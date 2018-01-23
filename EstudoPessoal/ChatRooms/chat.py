@@ -80,91 +80,45 @@ def enterRoom(roomName):
             return bt.static_file('chat.html',root='files/')
     return 'Not Allowed in this Room!'
 
-@get('/<roomName>/websocket', apply=[websocket])
+@get('/websocket', apply=[websocket])
 def chat(ws):
     global log
     global secret
     global chatRooms
-    for room_name in chatRooms:
-        key = bt.request.get_cookie(room_name, secret=secret)
-        if key==chatRooms[room_name]:
-        
-            if(ws!=None):
-                users.append(ws)
-                #Send conversation to new client
-                
-                ###################################
-                #Receive and send messages
-                while True:
-                    msg = ws.receive()
-                    print("received msg:",msg)
-                    
-                    if msg is not None:
-                        for u in users:
-                            try:
-                                u.send(msg)
-                            except:
-                                print("error sending message")
-                                pass
-                    else:
-                        break
-                ##################################
-                try:    
-                    users.remove(ws)
-                except:
-                    print("error removing ws")
-                    pass
-            else:
-                print("Someone call /websocket without websocket")
-                pass
-        
-    return 'Not allowed to Send message!!'
-
-#@get('/<roomName>/websocket', apply=[websocket])
-#def handleChat(roomName,ws):
-#    t=threading.Thread(target=chat(roomName,ws))
-#    UsersChatThread[roomName]=t
-#    t.start()
-#
-#
-#def chat(roomName,ws):
-#    global log
-#    global secret
-#    global chatRooms
+    print("Websocket")
 #    for room_name in chatRooms:
 #        key = bt.request.get_cookie(room_name, secret=secret)
 #        if key==chatRooms[room_name]:
-#        
-#            if(ws!=None):
-#                users.append(ws)
-#                #Send conversation to new client
-#                
-#                ###################################
-#                #Receive and send messages
-#                while True:
-#                    msg = ws.receive()
-#                    print("received msg:",msg)
-#                    
-#                    if msg is not None:
-#                        for u in users:
-#                            try:
-#                                u.send(msg)
-#                            except:
-#                                print("error sending message")
-#                                pass
-#                    else:
-#                        break
-#                ##################################
-#                try:    
-#                    users.remove(ws)
-#                except:
-#                    print("error removing ws")
-#                    pass
-#            else:
-#                print("Someone call /websocket without websocket")
-#                pass
-#        
-#    return 'Not allowed to Send message!!'
+        
+    if(ws!=None):
+        users.append(ws)
+        #Send conversation to new client
+        
+        ###################################
+        #Receive and send messages
+        while True:
+            msg = ws.receive()
+            print("received msg:",msg)
+            
+            if msg is not None:
+                for u in users:
+                    try:
+                        u.send(msg)
+                    except:
+                        print("error sending message")
+                        pass
+            else:
+                break
+        ##################################
+        try:    
+            users.remove(ws)
+        except:
+            print("error removing ws")
+            pass
+    else:
+        print("Someone call /websocket without websocket")
+        pass
+        
 
 
 

@@ -33,7 +33,7 @@
             }
 			cookie=document.cookie;
 			roomName=cookie.split('=')[0];
-            ws = new WebSocket('ws://127.0.0.1:8080/'+roomName+'/websocket');
+            ws = new WebSocket('ws://127.0.0.1:8080/websocket');
             ws.onopen = function(evt) {
                 //$('#messages').append('<li>Connected to chat.</li>');
 				document.getElementById("messages").value="Connected to chat.\n";
