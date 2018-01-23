@@ -108,6 +108,8 @@ def ret2(path):
     except Exception as e:
         return str(e)    
 
+if __name__ == '__main__':
+   app.run(debug = True)#localhos:5000
     
 #>>set FLASK_APP=FlaskServer.py
 

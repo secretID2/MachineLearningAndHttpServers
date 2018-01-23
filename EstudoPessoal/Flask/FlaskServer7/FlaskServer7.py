@@ -49,7 +49,7 @@ def ret2(path):
         #return send_file('C:/Users/lcristovao/Desktop/Work/EstudoPessoal/Flask/'+name, attachment_filename=name)
     except Exception as e:
         return str(e) 
-#if __name__ == '__main__':
-   #app.run(debug = True)
+if __name__ == '__main__':
+   app.run(debug = True)
    
    
