@@ -9,7 +9,7 @@ import pandas as pd
 from ML_MegaFunction import ReturnPredictor 
 
 #Load dataset from site
-
+"""
 url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
 dataset = pd.read_csv(url, names=names)
@@ -24,7 +24,7 @@ print("Original values:\n",values[:n,:])
 for i in range(n):
     print("Prediction for previous line:\n",values[i,:-1],"->",best_model.predict(values[:n,:-1])[i])
 
-
+"""
 #Other dataset example
 #_____________________________________________________________________________________________________________________________________________
 
@@ -49,7 +49,7 @@ names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num',
          'marital-status','occupation','relationship','race','sex',
          'capital-gain', 'capital-loss','hours-per-week','native-country',
          'class']
-dataset = pd.read_csv(url, names=names)
+dataset = pd.read_csv(url)# ,names=names)
 #print(dataset.head)
 #Must eliminate ? values of dataset
 #dataset2=pd.get_dummies(dataset.iloc[:,:-1])

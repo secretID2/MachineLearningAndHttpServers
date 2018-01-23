@@ -30,17 +30,19 @@ from sklearn import preprocessing
 class Predictor:
     
     loading=str(0)+'%'
-    
+    @staticmethod
     def categoricalToNumeric(array):
         le = preprocessing.LabelEncoder()
         le.fit(array)
         return le.transform(array)
+    
     
     def TurnDatasetToNumeric(self,dataset):
         
         for i in range(len(dataset.dtypes)):
             if dataset.dtypes[i]==object:
                 v=dataset.iloc[:,i].values
+                print(v)
                 v=self.categoricalToNumeric(v)
                 dataset.iloc[:,i]=v
         
@@ -55,6 +57,7 @@ class Predictor:
         class_index=dataset.shape[1]-1
         #Shuffle data
         dataset=dataset.sample(frac=1,random_state=seed)
+        print(dataset.head)
         self.loading=str(5)+'%'
         
          #Turn all columns of atributes that have string categorical values to numbers
@@ -126,7 +129,10 @@ class Predictor:
         print('\n\nFinal Final Score: ',accuracy_score(FFY, predictions))
         print('Confusion matrix\n',confusion_matrix(FFY, predictions))
         self.loading=str(100)+'%'
-        return best_model, dataset
+        return best_model
+    
+    
+   
 
 #_______________Main____________________________________________________________
 print(__name__)

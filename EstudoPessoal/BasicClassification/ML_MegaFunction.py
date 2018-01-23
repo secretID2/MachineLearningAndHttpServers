@@ -37,6 +37,7 @@ def TurnDatasetToNumeric(dataset):
     for i in range(len(dataset.dtypes)):
         if dataset.dtypes[i]==object:
             v=dataset.iloc[:,i].values
+            print(v)
             v=categoricalToNumeric(v)
             dataset.iloc[:,i]=v
     
@@ -52,7 +53,7 @@ def ReturnPredictor(dataset,true_test_size=0.5,validation_size=0.20,cross_val_sp
     #Shuffle data
     dataset=dataset.sample(frac=1,random_state=seed)
     
-    
+    print(dataset.head())
      #Turn all columns of atributes that have string categorical values to numbers
     dataset.iloc[:,:-1]=TurnDatasetToNumeric(dataset.iloc[:,:-1])
     #print(dataset.head)

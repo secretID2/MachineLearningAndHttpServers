@@ -6,14 +6,21 @@ Created on Wed Jan 17 09:21:43 2018
 """
 
 import threading
+class Y:
+    def __init__(self,speak):
+        self.speak=speak
+        
+    def Run(self):
+        print(self.speak)
 
 class X:
     index=0
     
-    def __init__(self,_id,max_num,step):
+    def __init__(self,_id,max_num,step,speak):
         self.id=_id
         self.max=max_num
         self.step=step
+        self.y=Y(speak)
         
     def Run(self):
         for i in range (0,self.max,self.step):
@@ -21,13 +28,14 @@ class X:
             print("Hi I am",self.id,"My index is",self.index)
             
      
-
+    def Y(self):
+        return self.y 
 
 
 #____________main_____________________________________
         
-x1=X(1,100,1)
-x2=X(2,200,2)
+x1=X(1,100,1,'AAA')
+x2=X(2,200,2,'BBB')
 
 hashmap ={}
 hashmap[1]=x1
