@@ -1,64 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="utf-8" />
-    <title>WebSocket Chat</title>
-
-    <style>
-        li { list-style: none; }
-    </style>
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-    <script>
-		function compareStrings(st1,st2){
-			var compare=false;
-			var n=0;
-			for(i=0;i<st1.length;i++){
-				if(st1[i]==st2[i])
-					n++;
-				else
-					break;
-			}
-			if(n==st1.length)
-				compare=true;
-				
-			return compare	
-		}
-        $(document).ready(function() {
-            if (!window.WebSocket) {
-                if (window.MozWebSocket) {
-                    window.WebSocket = window.MozWebSocket;
-                } else {
-                    $('#messages').append("<li>Your browser doesn't support WebSockets.</li>");
-                }
-            }
-            ws = new WebSocket('ws://127.0.0.1:8080/websocket');
-            ws.onopen = function(evt) {
-                $('#messages').append('<li>Connected to chat.</li>');
-            }
-            ws.onmessage = function(evt) {
-				if(compareStrings(evt.data,"$#please close")){
-					console.log("closnig socket connection");
-					ws.close()
-				}
-				else{
-					$('#messages').append('<li>' + evt.data + '</li>');
-				}
-            }
-            $('#send-message').submit(function() {
-                ws.send($('#name').val() + ": " + $('#message').val());
-                $('#message').val('').focus();
-                return false;
-            });
-        });
-    </script>
+  <title>ChatRooms</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js"></script>
 </head>
 <body>
-    <h2>WebSocket Chat Example</h2>
-    <form id="send-message">
-        <input id="name" type="text" value="name">
-        <input id="message" type="text" value="message" />
-        <input type="submit" value="Send" />
-    </form>
-    <div id="messages"></div>
+<h2>Welcome to the website</h2>
+<h3>Create Chat Room</h3>
+	<form action="/createChatRoom" method="post">
+		Room Name: <input name="username" type="text"  />
+		Password: <input name="password" type="password"  />
+		<input value="Login" type="submit" />
+	</form>
+	<div id="ChatRooms">
+	
+	</div>	
 </body>
 </html>

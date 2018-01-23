@@ -33,7 +33,8 @@
             }
             ws = new WebSocket('ws://127.0.0.1:8080/websocket');
             ws.onopen = function(evt) {
-                $('#messages').append('<li>Connected to chat.</li>');
+                //$('#messages').append('<li>Connected to chat.</li>');
+				document.getElementById("messages").value="Connected to chat.\n";
             }
             ws.onmessage = function(evt) {
 				if(compareStrings(evt.data,"$#please close")){
@@ -41,7 +42,8 @@
 					ws.close()
 				}
 				else{
-					$('#messages').append('<li>' + evt.data + '</li>');
+					//$('#messages').append('<li>' + evt.data + '</li>');
+					document.getElementById("messages").value+= evt.data+"\n" ;
 				}
             }
             $('#send-message').submit(function() {
@@ -59,6 +61,6 @@
         <input id="message" type="text" value="message" />
         <input type="submit" value="Send" />
     </form>
-    <div id="messages"></div>
+    <textarea id="messages" style="width:400px;height:150px;"></textarea>
 </body>
 </html>

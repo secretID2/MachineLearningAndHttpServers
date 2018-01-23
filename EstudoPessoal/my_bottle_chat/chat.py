@@ -14,7 +14,7 @@ users = []
 log=[]
 @get('/')
 def index():
-    return bt.static_file('index.html',root='files/')
+    return bt.static_file('chat.html',root='files/')
 
 @get('/websocket', apply=[websocket])
 def chat(ws):
