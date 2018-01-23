@@ -41,7 +41,7 @@
             ws.onmessage = function(evt) {
 				if(compareStrings(evt.data,"$#please close")){
 					console.log("closing socket connection");
-					ws.close()
+					//ws.close()
 				}
 				else{
 					//$('#messages').append('<li>' + evt.data + '</li>');
