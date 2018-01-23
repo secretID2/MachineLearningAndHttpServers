@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChatRooms</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+</head>
+<body>
+<h2>Welcome to the website</h2>
+<h3>Create Chat Room</h3>
+	<form action="/createChatRoom" method="post">
+		Room Name: <input name="roomName" type="text"  />
+		Password: <input name="password" type="password"  />
+		<input value="Enter" type="submit" />
+	</form>
+	<div id="ChatRooms">
+	
+	</div>
+	<script>
+		document.onload=LoadRooms();
+		function LoadRooms(){
+			
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					$("#ChatRooms").append(this.response);
+				
+				}
+			};
+			xhttp.open("GET", "loadRooms", true);
+			xhttp.send();
+
+			
+
+		}
+	</script>	
+</body>
+</html>
