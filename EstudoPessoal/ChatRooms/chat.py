@@ -48,10 +48,13 @@ def LoadRooms():
 def createRoom():
     global secret
     global chatRooms
+    global RoomUsers
     roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
     #print(roomName,password)
     chatRooms[roomName]=password
+    users=[]
+    RoomUsers[roomName]=users
     bt.response.set_cookie(roomName, password, secret=secret)
     return bt.redirect('/'+roomName)
 
@@ -85,13 +88,22 @@ def chat(ws):
     global log
     global secret
     global chatRooms
-    print("Websocket")
-#    for room_name in chatRooms:
-#        key = bt.request.get_cookie(room_name, secret=secret)
-#        if key==chatRooms[room_name]:
+    global RoomUsers
+#    print("Websocket")
         
     if(ws!=None):
+        for room_name in chatRooms:
+            key = bt.request.get_cookie(room_name, secret=secret)
+            
+            #if key==chatRooms[room_name]:
+                #Valid user
+                #print('pass here')
+        users=RoomUsers[room_name]
         users.append(ws)
+        RoomUsers[room_name]=users
+                
+                    
+                    
         #Send conversation to new client
         
         ###################################
@@ -101,6 +113,7 @@ def chat(ws):
             print("received msg:",msg)
             
             if msg is not None:
+                users= RoomUsers[room_name]
                 for u in users:
                     try:
                         u.send(msg)
@@ -109,12 +122,8 @@ def chat(ws):
                         pass
             else:
                 break
-        ##################################
-        try:    
-            users.remove(ws)
-        except:
-            print("error removing ws")
-            pass
+            ##################################
+       
     else:
         print("Someone call /websocket without websocket")
         pass

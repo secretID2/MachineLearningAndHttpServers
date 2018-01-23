@@ -39,14 +39,15 @@
 				document.getElementById("messages").value="Connected to chat.\n";
             }
             ws.onmessage = function(evt) {
-				if(compareStrings(evt.data,"$#please close")){
+				/*if(compareStrings(evt.data,"$#please close")){
 					console.log("closing socket connection");
 					//ws.close()
 				}
-				else{
+				else{*/
 					//$('#messages').append('<li>' + evt.data + '</li>');
+					console.log(evt.data)
 					document.getElementById("messages").value+= evt.data+"\n" ;
-				}
+				//}
             }
             $('#send-message').submit(function() {
                 ws.send($('#name').val() + ": " + $('#message').val());
