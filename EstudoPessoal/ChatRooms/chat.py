@@ -169,6 +169,7 @@ def chat(ws):
                 users= RoomUsers[room_name]
                 users[ws]=ws
                 RoomUsers[room_name]=users
+                msg=getMsg(msg)
                 for u in users:
                     try:
                         u.send(msg)
