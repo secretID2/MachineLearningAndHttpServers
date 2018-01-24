@@ -110,13 +110,24 @@ def getRoomName(msg):
     roomName=cookie.split('=')[0]
     return roomName
 
+def getPassword(msg):
+    cookie=msg.split(';')[0]
+    password=cookie.split('=')[1]
+    return password
+
+def getMsg(msg):
+    menssage=msg.split(';')[1]
+    return menssage
+
 def ValidateWebsocketConnection(msg):
     global chatRooms
-    cookie=msg.split(';')[0]
-    roomName=cookie.split('=')[0]
-    password=cookie.split('=')[1]
-    print("\n\n",roomName,password)
+    
+    roomName=getRoomName(msg)
+    password=getPassword(msg)
+    
     password=encry.decrypt(password)
+    
+    print("\n\n",roomName,password)
     if password==chatRooms[roomName]:
         return True
     else:
@@ -143,19 +154,20 @@ def chat(ws):
             print("received msg:",msg)
             if msg is not None:
                 #Validate User
-#                if(ValidateWebsocketConnection(msg)):
+                #if(ValidateWebsocketConnection(msg)):
                 room_name=getRoomName(msg)
                 users= RoomUsers[room_name]
                 users[ws]=ws
                 RoomUsers[room_name]=users
+                msg=getMsg(msg)
                 for u in users:
                     try:
                         u.send(msg)
                     except:
                         print("error sending message")
                         pass
-#                else:
-#                    print('User not valid to use websocket')
+                #else:
+                    #print('User not valid to use websocket')
             else:
                 #Close websocket
                 break
