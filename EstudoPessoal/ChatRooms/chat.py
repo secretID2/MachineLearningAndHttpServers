@@ -12,8 +12,8 @@ from bottle.ext.websocket import websocket
 import threading
 import datetime
 
-users = []
-log=[]
+#users = []
+#log=[]
 secret='nuncaVaodescobrr_ahah'
 chatRooms={}
 RoomUsers={}
@@ -27,6 +27,10 @@ class ChatRoom():
 @get('/')
 def index():
     return bt.static_file('index.html',root='files/')
+
+@get('/favicon.ico')
+def retfavicon():
+    return bt.static_file('straight_lines1.jpg',root='files/')
 
 @get('/loadRooms')
 def LoadRooms():
@@ -59,6 +63,7 @@ def createRoom():
     RoomUsers[roomName]=users
     ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
     bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
+    #bt.response.set_cookie(roomName, password,path='/websocket',expires=ts, secret=secret)
     return bt.redirect('/'+roomName)
 
 @bt.post('/accessRoom/<roomName>')
@@ -67,11 +72,12 @@ def accessRoom(roomName):
     global chatRooms
     #roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
-    print(roomName)
-    print(password==chatRooms[roomName])
+   #print(roomName)
+    #print(password==chatRooms[roomName])
     if password==chatRooms[roomName]:
         ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
         bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
+        #bt.response.set_cookie(roomName, password,path='/websocket',expires=ts, secret=secret)
         return bt.redirect('/'+roomName)
     else:
         return 'Not Allowed to access this Room!'
@@ -83,7 +89,7 @@ def enterRoom(roomName):
     global chatRooms
 
     key = bt.request.get_cookie(roomName, secret=secret)
-    print(key)
+    #print(key)
     if key==chatRooms[roomName]:
         return bt.static_file('chat.html',root='files/')
     return 'Not Allowed in this Room!'
@@ -95,15 +101,19 @@ def chat(ws):
     global chatRooms
     global RoomUsers
 #    print("Websocket")
-        
+       
     if(ws!=None):
         for room_name in chatRooms:
             key = bt.request.get_cookie(room_name, secret=secret)
+            print(room_name,key)
             if key:
+                
+                #room=room_name
                 break
             #if key==chatRooms[room_name]:
                 #Valid user
                 #print('pass here')
+        print(room_name)
         users=RoomUsers[room_name]
         users.append(ws)
         RoomUsers[room_name]=users
@@ -127,6 +137,7 @@ def chat(ws):
                         print("error sending message")
                         pass
             else:
+                #Close websocket
                 break
             ##################################
        
