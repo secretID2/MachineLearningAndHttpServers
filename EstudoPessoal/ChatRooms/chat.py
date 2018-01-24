@@ -95,9 +95,9 @@ def enterRoom(roomName):
     global chatRooms
 
     key = bt.request.get_cookie(roomName)
-    print(key)
-    password=encry.decrypt(key)
     #print(key)
+    password=encry.decrypt(key)
+    print(password)
     if password==chatRooms[roomName]:
         #ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
         #bt.response.set_cookie(roomName, key,path='/',expires=ts, secret=secret)
@@ -107,12 +107,12 @@ def enterRoom(roomName):
 
 def getRoomName(msg):
     cookie=msg.split(';')[0]
-    roomName=cookie.split('=')[0]
+    roomName=cookie.split('*')[0]
     return roomName
 
 def getPassword(msg):
     cookie=msg.split(';')[0]
-    password=cookie.split('=')[1]
+    password=cookie.split('*')[1]
     return password
 
 def getMsg(msg):
@@ -127,7 +127,7 @@ def ValidateWebsocketConnection(msg):
     
     password=encry.decrypt(password)
     
-    print("\n\n",roomName,password)
+    #print("\n\n",roomName,password)
     if password==chatRooms[roomName]:
         return True
     else:
@@ -154,20 +154,22 @@ def chat(ws):
             print("received msg:",msg)
             if msg is not None:
                 #Validate User
-                #if(ValidateWebsocketConnection(msg)):
-                room_name=getRoomName(msg)
-                users= RoomUsers[room_name]
-                users[ws]=ws
-                RoomUsers[room_name]=users
-                msg=getMsg(msg)
-                for u in users:
-                    try:
-                        u.send(msg)
-                    except:
-                        print("error sending message")
-                        pass
-                #else:
-                    #print('User not valid to use websocket')
+                if(ValidateWebsocketConnection(msg)):
+                    
+                    room_name=getRoomName(msg)
+                    print("validuser:",room_name)
+                    users= RoomUsers[room_name]
+                    users[ws]=ws
+                    RoomUsers[room_name]=users
+                    msg=getMsg(msg)
+                    for u in users:
+                        try:
+                            u.send(msg)
+                        except:
+                            print("error sending message")
+                            pass
+                else:
+                    print('User not valid to use websocket')
             else:
                 #Close websocket
                 break
