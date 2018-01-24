@@ -10,6 +10,7 @@ from bottle import get, run
 from bottle.ext.websocket import GeventWebSocketServer
 from bottle.ext.websocket import websocket
 import threading
+import datetime
 
 users = []
 log=[]
@@ -30,15 +31,16 @@ def index():
 @get('/loadRooms')
 def LoadRooms():
     global chatRooms
+    out=""
     if(len(chatRooms)>0):
-        out='<form action="/accessRoom" method="post">'
+       
         for room_name in chatRooms:
+            out+='<form action="/accessRoom/'+room_name+'" method="post">'
             out+='<br><p>'+room_name+'</p><br>'
-            out+='<input name="roomName" value="'+room_name+'" type="text" style="hidden"/>'
+            #out+='<input name="roomName" value="'+room_name+'" type="text" style="hidden"/>'
             out+='Password: <input name="password" type="password"  /><br>'
             out+='<input value="Enter" type="submit" /><br><br>'
-        
-        out+='</form>'
+            out+='</form>'
         return out
             
     else:
@@ -55,18 +57,21 @@ def createRoom():
     chatRooms[roomName]=password
     users=[]
     RoomUsers[roomName]=users
-    bt.response.set_cookie(roomName, password, secret=secret)
+    ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
+    bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
     return bt.redirect('/'+roomName)
 
-@bt.post('/accessRoom')
-def accessRoom():
+@bt.post('/accessRoom/<roomName>')
+def accessRoom(roomName):
     global secret
     global chatRooms
-    roomName = bt.request.forms.get('roomName')
+    #roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
     print(roomName)
+    print(password==chatRooms[roomName])
     if password==chatRooms[roomName]:
-        bt.response.set_cookie(roomName, password, secret=secret)
+        ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
+        bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
         return bt.redirect('/'+roomName)
     else:
         return 'Not Allowed to access this Room!'
@@ -76,11 +81,11 @@ def enterRoom(roomName):
     #print(roomName)
     global secret
     global chatRooms
-    for room_name in chatRooms:
-        key = bt.request.get_cookie(room_name, secret=secret)
-        #print(key)
-        if key==chatRooms[room_name]:
-            return bt.static_file('chat.html',root='files/')
+
+    key = bt.request.get_cookie(roomName, secret=secret)
+    print(key)
+    if key==chatRooms[roomName]:
+        return bt.static_file('chat.html',root='files/')
     return 'Not Allowed in this Room!'
 
 @get('/websocket', apply=[websocket])
