@@ -172,7 +172,7 @@ def chat(ws):
                 msg=getMsg(msg)
                 for u in users:
                     try:
-                        u.send(msg)
+                        users[u].send(msg)
                     except:
                         print("error sending message")
                         pass
