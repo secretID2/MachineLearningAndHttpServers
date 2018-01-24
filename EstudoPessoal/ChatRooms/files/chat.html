@@ -50,7 +50,7 @@
 				//}
             }
             $('#send-message').submit(function() {
-                ws.send($('#name').val() + ": " + $('#message').val());
+                ws.send(cookie+';'+ $('#name').val() + ": " + $('#message').val());
                 $('#message').val('').focus();
                 return false;
             });
