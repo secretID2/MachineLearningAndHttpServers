@@ -5,16 +5,18 @@ Created on Thu Jan 25 09:49:54 2018
 @author: lcristovao
 """
 
-import CreateDB
+
 import sqlite3
 import bottle as bt
 
 
 #_______Main___________________
 ##################################################################################
+
 #If DB already created comment the next part. 
 #This will create a db named todo.db in the same work directory as this file
 
+#import CreateDB
 #CreateDB.Run()
 ##################################################################################
 
