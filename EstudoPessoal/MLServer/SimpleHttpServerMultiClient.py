@@ -15,11 +15,10 @@ import time
 import ML_MegaFunction as ml
 import threading
 
-i=0
-username=''
-password=''
-secret='some-secret-key'
+import sqlite3
 
+
+secret='some-secret-key'
 
 
 clients={}
@@ -54,10 +53,20 @@ class Client:
     def getDatasetFromUrl(self,url,split_caracter=','):
         self.dataset=pd.read_csv(url,sep=split_caracter)
         
+#For TXT file
+#def getUsers():
+#   data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
+#   return data
 
-def getUsers():
-   data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
-   return data
+#for db        
+def getUsersDB():
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("SELECT username, password FROM users")
+    result = c.fetchall()
+#    print(result[0][0])
+    c.close()
+    return result
 
 
 def validate_user(secret):
@@ -68,22 +77,44 @@ def validate_user(secret):
             return True
     return False
 
+#For txt db
+#def check_login(username,password):
+#    Users=getUsers()
+#    for l in Users:
+#        print(l)
+#        if(username==l[0] and password==l[1]):
+#            return True
+#    return False
 
-
-#_______Main___________________________
-
-Users=getUsers()
-print(Users)
-
-
+#For db
 def check_login(username,password):
-    Users=getUsers()
+    Users=getUsersDB()
     for l in Users:
         print(l)
         if(username==l[0] and password==l[1]):
             return True
     return False
                  
+
+#_______Main___________________________
+#txt version##########################
+#Users=getUsers()
+#print(Users)
+#########################################
+    
+#sql version###only use in case of db not created###################
+#import CreateDB as db
+#db.Start()
+#db.DropTable()
+#db.InsertNewuser('Luis','555')
+#db.DeleteUser('Luis')    
+
+###################################
+    
+
+
+
+
         
 @bt.route('/') # or @route('/login')
 def init():
