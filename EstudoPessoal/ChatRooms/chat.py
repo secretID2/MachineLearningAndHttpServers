@@ -120,15 +120,7 @@ def getMsg(msg):
     menssage=msg.split(';')[1]
     return menssage
 
-def ValidateWebsocketConnection(msg):
-    global chatRooms
-    
-    roomName=getRoomName(msg)
-    password=getPassword(msg)
-    
-    password=encry.decrypt(password)
-    
-    #print("\n\n",roomName,password)
+
 
 def ValidateWebsocketConnection(msg):
     global chatRooms
