@@ -14,10 +14,8 @@ import os
 import time
 #import ML_MegaFunction as ml
 import threading
+import sqlite3
 
-i=0
-username=''
-password=''
 secret='some-secret-key'
 
 
@@ -33,11 +31,6 @@ class Client:
         self.username=username
         self.password=password
         
-    def Run(self):
-        self.predictor=self.p.ReturnPredictor(self.dataset)
-        
-    def Loading(self):
-        return self.p.loading
     
     def uploadFile(self,save_path):
         upload = bt.request.files.get('upload')
@@ -45,11 +38,22 @@ class Client:
     
         #save_path='files/Template'
         upload.save(save_path, overwrite=True) # appends upload.filename automatically
+       
         
 
 def getUsers():
    data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
    return data
+
+#for db        
+def getUsersDB():
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("SELECT username, password FROM users")
+    result = c.fetchall()
+#    print(result[0][0])
+    c.close()
+    return result
 
 
 def validate_user(secret):
@@ -61,29 +65,39 @@ def validate_user(secret):
     return False
 
 
-
-#_______Main___________________________
-
-Users=getUsers()
-print(Users)
-
-
 def check_login(username,password):
-    Users=getUsers()
+    Users=getUsersDB()
     for l in Users:
         print(l)
         if(username==l[0] and password==l[1]):
             return True
     return False
+
+#_______Main___________________________
+
+#Users=getUsers()
+#print(Users)
+
+#########################################
+    
+#sql version###only use in case of db not created###################
+#import CreateDB as db
+#db.Start()
+#db.DropTable()
+#db.InsertNewuser('Luis','555')
+#db.DeleteUser('Luis')    
+
+###################################
+
                  
         
 @bt.route('/') # or @route('/login')
 def init():
-    return bt.redirect("/index.html")
+    return bt.template('index')
     
-@bt.get('/index.html') # or @route('/login')
-def ShowMainPage():
-    return bt.static_file("index.html",root="files/")    
+#@bt.get('/index.html') # or @route('/login')
+#def ShowMainPage():
+#    return bt.static_file("index.html",root="files/")    
     
 @bt.post('/login')
 def do_login():
@@ -119,47 +133,19 @@ def do_upload():
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
+            upload = bt.request.files.get('upload')
             newpath = r'files/Template/'+c+'/' 
             if not os.path.exists(newpath):
                 os.makedirs(newpath)
             t=threading.Thread(target=clients[c].uploadFile(newpath))
             clients_upload_threads[c]=t
             t.start()
-            return "Hi "+c+", YourFile was uploaded!"
+            return "Hi "+c+", "+upload.filename+" was uploaded!"
         
     return "You are not logged in. Access denied."
 
 
-@bt.get('/start')
-def GetPredictor():
-    global clients
-    global clients_run_threads
-    for c in clients:
-        key = bt.request.get_cookie(clients[c].username, secret=secret)
-        if key:
-            #Valid User
-            #client_username=c #=clients[c].username #
-            t=threading.Thread(target=clients[c].Run)
-            clients_run_threads[c]=t
-            t.start()
-            return "Started the Proccess!"
-            
-    return "You are not logged in. Access denied."
 
-@bt.get('/How_it_is_going')
-def Loading():
-    for c in clients:
-        key = bt.request.get_cookie(clients[c].username, secret=secret)
-        if key:
-            #Valid User
-            #client_username=c #=clients[c].username #
-#            if(clients[c].p.loading!="100%"):
-#                return clients[c].p.loading
-#            else:
-#                return bt.redirect("/Predictor.html")
-            return clients[c].p.loading
-    
-    return "You are not logged in. Access denied."
         
     
 
