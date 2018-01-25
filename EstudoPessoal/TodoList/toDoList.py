@@ -22,15 +22,44 @@ import bottle as bt
 
 
 @bt.get('/')
-def start_page():
+@bt.get('/open')
+def open_page():
+    conn = sqlite3.connect('todo.db')
+    c = conn.cursor()
+    c.execute("SELECT id, task FROM todo WHERE status=1")
+    result = c.fetchall()
+    print(result[0][0])
+    c.close()
+    output = bt.template('make_table', rows=result,Open="Open")
+    return output
+
+@bt.get('/close')
+def close_page():
     conn = sqlite3.connect('todo.db')
     c = conn.cursor()
     c.execute("SELECT id, task FROM todo WHERE status=0")
     result = c.fetchall()
     print(result[0][0])
     c.close()
-    output = bt.template('make_table', rows=result)
+    output = bt.template('make_table', rows=result,Open="Close")
     return output
+
+#I think get and route are the same??
+@bt.route('/new', method='GET')
+def new_item():
+
+    new = bt.request.GET.task.strip()
+    status=bt.request.GET.status.strip()
+    conn = sqlite3.connect('todo.db')
+    c = conn.cursor()
+
+    c.execute("INSERT INTO todo (task,status) VALUES (?,?)", (new, status))
+    new_id = c.lastrowid
+
+    conn.commit()
+    c.close()
+
+    return '<p>The new task was inserted into the database, the ID is %s</p>' % new_id
 
 
 
