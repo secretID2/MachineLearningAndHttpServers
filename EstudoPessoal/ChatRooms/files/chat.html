@@ -37,7 +37,6 @@
             ws.onopen = function(evt) {
                 //$('#messages').append('<li>Connected to chat.</li>');
 				document.getElementById("messages").value="Connected to chat.\n";
-				ws.send(cookie+';');
             }
             ws.onmessage = function(evt) {
 				/*if(compareStrings(evt.data,"$#please close")){
