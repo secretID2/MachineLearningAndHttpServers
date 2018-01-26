@@ -20,7 +20,7 @@
 		document.onload=LoadRooms();
 		function LoadRooms(){
 			
-			
+			//DeleteAllCookies();
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
@@ -33,6 +33,18 @@
 
 			
 
+		}
+		function DeleteAllCookies(){
+			Cookie=document.cookie;
+			//if  not empty
+			if(Cookie.localeCompare('')==-1){
+				cookies=Cookie.split(';');
+				var cookies_names=[];
+				cookies.forEach(function(cookie){cookies_names.push(cookie.split('=')[0]);}); 
+				//deleting cookies
+				//cookies_names.forEach(function(name){document.cookie=name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';});
+				cookies_names.forEach(function(name){$.cookie(name, null, { path: '/' });});
+			}
 		}
 	</script>	
 </body>
