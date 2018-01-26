@@ -22,11 +22,10 @@ secret='some-secret-key'
 
 clients={}
 clients_upload_threads={}
-
+clients_delete_threads={}
 class Client:
     
-    #p=ml.Predictor()
-    dataset=None 
+  
     def __init__(self,username,password):
         self.username=username
         self.password=password
@@ -38,7 +37,13 @@ class Client:
     
         #save_path='files/Template'
         upload.save(save_path, overwrite=True) # appends upload.filename automatically
-       
+        
+    def deleteFile(self,path):
+        try:
+            os.remove(path)
+            self.delete_file=True
+        except:
+           self.delete_file=False
         
 
 def getUsers():
@@ -169,6 +174,48 @@ def do_upload():
         
     return "You are not logged in. Access denied."
 
+@bt.get('/delete')
+def delete():
+    global secret
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #valid user
+            files_dir = 'files/Template/'+c
+            user_files = os.listdir(files_dir)
+            print(user_files)
+            if user_files:
+                return bt.template('delete_files',rows=user_files,User=c)
+            else:
+                #Dont have files yet
+                return "<h1>No Files Yet to Delete</h1><br><a href='restricted'>Return</a>"
+    
+    return "You are not logged in. Access denied."
+
+
+
+@bt.get('/delete/<filename>',method='GET')
+def erase(filename):
+    global clients
+    global secret
+    global clients_upload_threads
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #valid user
+            
+            newpath = r'files/Template/'+c+'/'+filename 
+#            if not os.path.exists(newpath):
+#                os.makedirs(newpath)
+            t=threading.Thread(target=clients[c].deleteFile(newpath))
+            clients_delete_threads[c]=t
+            t.start()
+            if clients[c].delete_file:
+                return "Hi "+c+", "+filename+" was Deleted!<br><a href='/delete'>Return to previouse page</a>"
+            else:
+                return "Hi "+c+", "+filename+" was  Not Deleted!<br><a href='/delete'>Return to previouse page</a>"
+        
+    return "You are not logged in. Access denied."
 
 
         

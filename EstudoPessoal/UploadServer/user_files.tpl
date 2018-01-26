@@ -4,7 +4,7 @@
   Select a file: <input type="file" name="upload" />
   <input type="submit" value="Start upload" />
 </form>
-<a href="/">Return</button></a>		<a href="delete">Delete</a>	
+<text style="cursor:pointer; color:blue; text-decoration:underline" onclick="logout(this)">Log Out</text>		<a href="delete">Delete</a>	
 
 <table border="1">
 %for row in rows:
@@ -30,5 +30,9 @@ function off(row){
 function download(file){
 window.location=file;
 
+}
+function logout(text){
+	document.cookie="{{User}}=;"//expires='Wed 01 Jan 1970'";
+	window.location="/";
 }
 </script>
