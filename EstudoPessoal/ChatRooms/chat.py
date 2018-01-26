@@ -18,6 +18,7 @@ import encryption
 secret='nuncaVaodescobrr_ahah'
 chatRooms={}
 RoomUsers={}
+RoomLog={}
 encry=encryption.Encryption()
 
 class ChatRoom():
@@ -56,12 +57,17 @@ def createRoom():
     global secret
     global chatRooms
     global RoomUsers
+    global RoomLog
     roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
     #print(roomName,password)
     chatRooms[roomName]=password
     users={}
     RoomUsers[roomName]=users
+    #Initialization of room log
+    log=[]
+    RoomLog[roomName]=log
+    
     ts = datetime.datetime.now()+datetime.timedelta(seconds=1)
     encrypt_pass=encry.encrypt(password)
     bt.response.set_cookie(roomName, encrypt_pass,path='/',expires=ts)
@@ -142,11 +148,12 @@ def chat(ws):
     global secret
     global chatRooms
     global RoomUsers
+    global RoomLog
 #    print("Websocket")
        
     if(ws!=None):
        
-                
+        first_time=1       
         #Send conversation to new client
         
         ###################################
@@ -156,13 +163,28 @@ def chat(ws):
             print("received msg:",msg)
             if msg is not None:
                 #Validate User
-
+                
+                    
+                
+                
 #               if(ValidateWebsocketConnection(msg)):
                 room_name=getRoomName(msg)
                 users= RoomUsers[room_name]
-                users[ws]=ws
                 RoomUsers[room_name]=users
                 msg=getMsg(msg)
+                #First time user enters it receives log and is added to room users
+                if first_time==1:
+                    
+                    users[ws]=ws
+                    room_log=RoomLog[room_name]
+                    ws.send(room_log)
+                    first_time+=1
+                #After first time we need to regist the conversation    
+                else:
+                    log=RoomLog[room_name]
+                    log.append(msg)
+                    RoomLog[room_name]=log
+                
                 for u in users:
                     try:
                         users[u].send(msg)
