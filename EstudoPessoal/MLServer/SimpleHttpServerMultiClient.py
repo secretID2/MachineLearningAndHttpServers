@@ -88,12 +88,14 @@ def validate_user(secret):
 
 #For db
 def check_login(username,password):
-    Users=getUsersDB()
-    for l in Users:
-        print(l)
-        if(username==l[0] and password==l[1]):
-            return True
-    return False
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("SELECT username, password FROM users where username='"+username+"' and password='"+password+"'")
+    result = c.fetchall()
+    if result:
+        return True
+    else:
+        return False
                  
 
 #_______Main___________________________
