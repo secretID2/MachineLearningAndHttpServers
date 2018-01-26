@@ -79,7 +79,7 @@ def validate_user(secret):
 #    return False
 
 
-#for txt file
+#for BD
 def check_login(username,password):
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -89,6 +89,19 @@ def check_login(username,password):
         return True
     else:
         return False
+    
+    
+def SignUp(username,password):
+    conn = sqlite3.connect('users.db')
+#    c = conn.cursor()
+    try:
+        conn.execute("INSERT INTO users (username,password) VALUES ('"+username+"','"+password+"')")
+        conn.commit()
+    except:
+        return False
+    
+    return True
+   
 
 #_______Main___________________________
 
@@ -112,9 +125,9 @@ def check_login(username,password):
 def init():
     return bt.template('index')
     
-#@bt.get('/index.html') # or @route('/login')
-#def ShowMainPage():
-#    return bt.static_file("index.html",root="files/")    
+@bt.get('/SignUp')
+def sign_up_page():
+    return bt.template('sign_up',different_pass_error="hidden",username_error="hidden")
     
 @bt.post('/login')
 def do_login():
@@ -133,6 +146,25 @@ def do_login():
         return bt.redirect('/restricted')
     else:
         return "<p>Login failed.</p>"
+    
+    
+@bt.post('/SignUp/form',method='POST')
+def signUp():
+    global clients
+    global secret
+    
+    username = bt.request.forms.get('username')
+    password = bt.request.forms.get('password')
+    cpassword = bt.request.forms.get('cpassword')
+    if cpassword!=password:
+        return bt.template('sign_up',different_pass_error="visible",username_error="hidden")
+    else:
+        if SignUp(username,password):
+            #if it was successful de sign uo in the db
+            return "<h2>Your username: "+username+" was successfully inserted in our DataBase.</h2><br><a href='/'>Return</a>"
+        else:
+            return bt.template('sign_up',different_pass_error="hidden",username_error="visible")    
+
 
 @bt.get('/restricted')
 def restricted_area():
