@@ -85,9 +85,6 @@ def check_login(username,password):
     else:
         return False
 
-
-
-
 #_______Main___________________________
 
 #Users=getUsers()
@@ -125,6 +122,9 @@ def do_login():
         client=Client(username,password)
         clients[username]=client
         bt.response.set_cookie(username, password, secret=secret)
+        newpath = r'files/Template/'+username+'/' 
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
         return bt.redirect('/restricted')
     else:
         return "<p>Login failed.</p>"
@@ -132,10 +132,20 @@ def do_login():
 @bt.get('/restricted')
 def restricted_area():
     global secret
-    if validate_user(secret=secret):
-        return bt.static_file("upload_dataset.html",root="files/Template")
-    else:
-        return "You are not logged in. Access denied."
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #valid user
+            files_dir = 'files/Template/'+c
+            user_files = os.listdir(files_dir)
+            print(user_files)
+            if user_files:
+                return bt.template('user_files',rows=user_files,User=c)
+            else:
+                #Dont have files yet
+                return bt.template('no_files_yet',User=c)
+    
+    return "You are not logged in. Access denied."
     
     
     
@@ -150,12 +160,12 @@ def do_upload():
             #valid user
             upload = bt.request.files.get('upload')
             newpath = r'files/Template/'+c+'/' 
-            if not os.path.exists(newpath):
-                os.makedirs(newpath)
+#            if not os.path.exists(newpath):
+#                os.makedirs(newpath)
             t=threading.Thread(target=clients[c].uploadFile(newpath))
             clients_upload_threads[c]=t
             t.start()
-            return "Hi "+c+", "+upload.filename+" was uploaded!"
+            return "Hi "+c+", "+upload.filename+" was uploaded!<br><a href='/restricted'>Return to previouse page</a>"
         
     return "You are not logged in. Access denied."
 
@@ -166,9 +176,13 @@ def do_upload():
 
 @bt.get('/<filepath:path>')
 def server_static(filepath):
-    
-    if validate_user(secret='some-secret-key'):
-        return bt.static_file(filepath, root='files/Template') 
+    global secret
+    print(filepath)
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #valid user
+            return bt.static_file(filepath, root='files/Template/'+c,download=True) 
     else:
         return "You are not logged in. Access denied."
 
