@@ -62,7 +62,7 @@ def createRoom():
     chatRooms[roomName]=password
     users={}
     RoomUsers[roomName]=users
-    ts = datetime.datetime.now()+datetime.timedelta(days=1)
+    ts = datetime.datetime.now()+datetime.timedelta(seconds=1)
     encrypt_pass=encry.encrypt(password)
     bt.response.set_cookie(roomName, encrypt_pass,path='/',expires=ts)
     #bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
@@ -79,7 +79,7 @@ def accessRoom(roomName):
    #print(roomName)
     #print(password==chatRooms[roomName])
     if password==chatRooms[roomName]:
-        ts = datetime.datetime.now()+datetime.timedelta(days=1)
+        ts = datetime.datetime.now()+datetime.timedelta(seconds=1)
         encrypt_pass=encry.encrypt(password)
         bt.response.set_cookie(roomName, encrypt_pass,path='/',expires=ts)
         #bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
