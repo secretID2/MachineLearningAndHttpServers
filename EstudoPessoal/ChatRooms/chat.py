@@ -205,8 +205,11 @@ def chat(ws):
 
             else:
                 #Close websocket
+<<<<<<< HEAD
                 print("Disconnecting ws:",ws)
                 SeeWhoDisconnected(ws)
+=======
+>>>>>>> parent of f8a22b9... Error of not sending msgs in the begining done
                 break
             ##################################
        
