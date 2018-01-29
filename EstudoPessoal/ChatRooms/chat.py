@@ -108,7 +108,6 @@ def enterRoom(roomName):
         #ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
         #bt.response.set_cookie(roomName, key,path='/',expires=ts, secret=secret)
         return bt.static_file('chat.html',root='files/')
-        #return bt.template('chat',room=roomName)
     return 'Not Allowed in this Room!'
 
 
@@ -134,7 +133,7 @@ def ValidateWebsocketConnection(msg):
     cookie=msg.split(';')[0]
     roomName=cookie.split('=')[0]
     password=cookie.split('=')[1]
-    print("\n\n",roomName,password)
+    #print("\n\n",roomName,password)
     password=encry.decrypt(password)
     if password==chatRooms[roomName]:
         return True
@@ -206,7 +205,6 @@ def chat(ws):
 
             else:
                 #Close websocket
-
                 break
             ##################################
        
