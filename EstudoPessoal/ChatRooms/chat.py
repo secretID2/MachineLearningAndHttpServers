@@ -103,7 +103,7 @@ def enterRoom(roomName):
     key = bt.request.get_cookie(roomName)
     #print(key)
     password=encry.decrypt(key)
-    print(password)
+    #print(password)
     if password==chatRooms[roomName]:
         #ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
         #bt.response.set_cookie(roomName, key,path='/',expires=ts, secret=secret)
@@ -187,8 +187,14 @@ def chat(ws):
                 if first_time==1:
                     
                     users[ws]=ws
-#                    room_log=RoomLog[room_name]
-#                    ws.send(room_log)
+                    room_log=RoomLog[room_name]
+                    #if is not empty
+                    if room_log:
+                        for log in room_log:
+                            try:
+                                users[ws].send(log)
+                            except:
+                                print("Error sending log")
                     first_time+=1
                 #After first time we need to regist the conversation    
                 else:
