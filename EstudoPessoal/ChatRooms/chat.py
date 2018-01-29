@@ -141,6 +141,18 @@ def ValidateWebsocketConnection(msg):
         return False
 
 
+def SeeWhoDisconnected(ws):
+    global RoomUsers
+    for room in RoomUsers:
+        users=RoomUsers[room]
+        try:
+            del users[ws]
+        except:
+            print("wrong room!")
+            continue
+            
+
+
 @get('/websocket', apply=[websocket])
 def chat(ws):
     global log
@@ -163,8 +175,6 @@ def chat(ws):
             if msg is not None:
                 #Validate User
                 
-                    
-                
                 
 #               if(ValidateWebsocketConnection(msg)):
                 room_name=getRoomName(msg)
@@ -175,8 +185,8 @@ def chat(ws):
                 if first_time==1:
                     
                     users[ws]=ws
-                    room_log=RoomLog[room_name]
-                    ws.send(room_log)
+#                    room_log=RoomLog[room_name]
+#                    ws.send(room_log)
                     first_time+=1
                 #After first time we need to regist the conversation    
                 else:
@@ -195,6 +205,8 @@ def chat(ws):
 
             else:
                 #Close websocket
+                print("Disconnecting ws:",ws)
+                SeeWhoDisconnected(ws)
                 break
             ##################################
        
