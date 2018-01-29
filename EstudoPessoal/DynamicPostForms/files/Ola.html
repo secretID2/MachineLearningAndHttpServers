@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
+    </head>
+    <body>
+            <form>
+                Number of values:<input type="number" id="number" min="0" > 
+                <button name="submit"  >Submit</button>
+            </form>
+        <div id="complete_form">
+            
+        </div>
+        <script>
+            
+            function slideExamples(){
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("form")=this;
+                        $('#complete_form').slideToggle("slow");
+                    }
+                };
+                    xhttp.open("POST", "nvalues?number="+document.getElementById('number').value, true);
+                    xhttp.send();
+                
+                }
+                
+
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
+    </head>
+    <body>
+            Number of values:<input type="number" id="number" min="0" > 
+            <button  onclick="slideExamples()">Submit</button>
+        
+        <div id="complete_form" style="display:none;">
+            <div id="form">
+                
+            </div>
+            <button onclick="SumRequest()">Sum Values</button>
+        </div>
+        <div id="answer">
+        
+        </div>
+        <script>
+            //document.onload=loadXMLDoc();
+            function SumRequest() {
+                var xhttp = new XMLHttpRequest();
+                var table = document.getElementById("form").childNodes;
+                console.log(table[0].innerHTML);
+                /*xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                      document.getElementById("answer").innerHTML=this.response;
+                    }
+                };
+                    alert(c)
+                    xhttp.open("POST", "Sum", true);
+                    xhttp.send(c);
+                }*/
+            }
+            
+            
+            
+            
+            function slideExamples(){
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("form").innerHTML=this.response;
+                        $('#complete_form').slideToggle("slow");
+                    }
+                };
+                    xhttp.open("POST", "nvalues", true);
+                    xhttp.send("number="+document.getElementById('number').value);
+                
+                }
+                
+
+        </script>
+    </body>
+
+</html>
