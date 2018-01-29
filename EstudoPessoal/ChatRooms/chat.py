@@ -206,15 +206,7 @@ def chat(ws):
 
             else:
                 #Close websocket
-<<<<<<< HEAD
-<<<<<<< HEAD
-                print("Disconnecting ws:",ws)
-                SeeWhoDisconnected(ws)
-=======
->>>>>>> parent of f8a22b9... Error of not sending msgs in the begining done
-=======
-                
->>>>>>> parent of 6d57dd7... Revert "Error of not sending msgs in the begining done"
+
                 break
             ##################################
        
