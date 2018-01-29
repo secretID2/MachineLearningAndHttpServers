@@ -146,9 +146,11 @@ def SeeWhoDisconnected(ws):
     for room in RoomUsers:
         users=RoomUsers[room]
         try:
+            print("Deleting",users[ws])
             del users[ws]
+            break
         except:
-            print("wrong room!")
+            print("wrong room!->",room)
             continue
             
 
@@ -205,6 +207,8 @@ def chat(ws):
 
             else:
                 #Close websocket
+                print("Closing",ws)
+                SeeWhoDisconnected(ws)
                 break
             ##################################
        
