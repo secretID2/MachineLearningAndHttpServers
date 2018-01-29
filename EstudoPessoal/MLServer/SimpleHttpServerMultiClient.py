@@ -212,6 +212,7 @@ def Loading():
     
     return "You are not logged in. Access denied."
         
+
 @bt.get('/Prediction')
 def Predictor():
      global clients
