@@ -211,8 +211,8 @@ def Loading():
             return clients[c].Loading()
     
     return "You are not logged in. Access denied."
-        
 
+#It gets here the program from loadingpredicto.html that after loading  goes to Predictor.html  who sends prediction request
 @bt.get('/Prediction')
 def Predictor():
      global clients
