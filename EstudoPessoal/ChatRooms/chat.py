@@ -103,7 +103,7 @@ def enterRoom(roomName):
     key = bt.request.get_cookie(roomName)
     #print(key)
     password=encry.decrypt(key)
-    #print(password)
+    print(password)
     if password==chatRooms[roomName]:
         #ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
         #bt.response.set_cookie(roomName, key,path='/',expires=ts, secret=secret)
