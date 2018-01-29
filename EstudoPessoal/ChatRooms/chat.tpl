@@ -9,8 +9,6 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script>
-		var cookie;
-		var roomName
 		function compareStrings(st1,st2){
 			var compare=false;
 			var n=0;
@@ -39,7 +37,7 @@
             ws.onopen = function(evt) {
                 //$('#messages').append('<li>Connected to chat.</li>');
 				document.getElementById("messages").value="Connected to chat.\n";
-				ws.send(cookie+';');
+				ws.send("$#{{room}}");
             }
             ws.onmessage = function(evt) {
 				/*if(compareStrings(evt.data,"$#please close")){
@@ -58,12 +56,6 @@
                 return false;
             });
         });
-		
-		window.onhashchange = function() {
-			//If user exists room:
-			 ws.send(cookie+';$$#Bye!?');
-		}
-		
     </script>
 </head>
 <body>
