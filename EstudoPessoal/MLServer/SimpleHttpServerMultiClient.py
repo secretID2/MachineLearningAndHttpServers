@@ -28,6 +28,7 @@ class Client:
     
     
     dataset=None 
+    examples=None
     def __init__(self,username,password):
         self.username=username
         self.password=password
@@ -227,6 +228,7 @@ def Predictor():
             p=client.predictor
             data.iloc[:,:-1]=ml_instance.TurnDatasetToNumeric(data.iloc[:,:-1])
             data=data.sample(frac=1)
+            clients[c].examples=data
             n=10
             output="SCORE:"+str(ml_instance.score)+"<br><br>"
             output+="Original values:<br>"
@@ -234,7 +236,36 @@ def Predictor():
             output+="<br><br>"
             for i in range(n):
                 output+="<br>Prediction for previous line:<br>"+np.array_str(data.iloc[i,:-1].values)+"->"+np.array_str(p.predict(data.iloc[i:i+1,:-1].values))
-            return output    
+            return output
+    
+        
+        
+@bt.get('/InputPredict')
+def InputPredict():
+    global clients
+    global clients_run_threads
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            print("Client:",c)
+            out='<table id="input">'
+            input_rows=['Attributes','Values']
+            for row in input_rows:
+                out+='<tr><th>'+str(row)+'</th></tr>'
+                out+='<tr name="'+str(row)+'">'
+                for i in range (clients[c].dataset.shape[1]-1):
+                    if(row=='Values'):
+                        out+='<th><input name="'+str(row)+'" value="'+str(clients[c].examples.iloc[0,i])+'"></th>'
+                    else:
+                        out+='<th><input name="'+str(row)+'" value="'+str(i)+'"></th>'
+                    
+                out+='</tr>'
+            out+='</table>'        
+            return out
+        
+        
+
+        
 
 @bt.get('/<filepath:path>')
 def server_static(filepath):

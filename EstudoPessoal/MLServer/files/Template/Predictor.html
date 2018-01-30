@@ -10,11 +10,26 @@
             </p>
             <button onclick="loadXMLDoc()">New Examples</button>
         </div>
+        <br>
+        --------------------------
+        <br>
+        <button onclick="getInputTable()">Try Example</button>
         <div id="input">
         
         </div>
+        <button>Predict</button>
         <script>
-            document.onload=loadXMLDoc();
+            document.onload=Main();
+            
+            
+            function Main(){
+                
+                loadXMLDoc();
+                getInputTable();
+                
+            }
+            
+            
             function loadXMLDoc() {
               var xhttp = new XMLHttpRequest();
               xhttp.onreadystatechange = function() {
@@ -28,7 +43,20 @@
             function slideExamples(){
                 $('#Examples').slideToggle("slow");
 
-            }    
+            }
+            function getInputTable(){
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("input").innerHTML=this.response;
+                    }
+                };
+                xhttp.open("GET", "InputPredict", true);
+                xhttp.send();
+            }
+            
+            
+            
 
         </script>
     </body>
