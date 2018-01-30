@@ -19,19 +19,38 @@
         <script>
             //document.onload=loadXMLDoc();
             function SumRequest() {
-                var xhttp = new XMLHttpRequest();
-                var table = document.getElementById("form").childNodes;
-                console.log(table[0].innerHTML);
-                /*xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                      document.getElementById("answer").innerHTML=this.response;
+                    var xhttp = new XMLHttpRequest();
+                    var values=[];
+                    var table=document.getElementById("input");
+                    for(i=0;i<table.rows.length;i++){
+                        for(j=0;j<table.rows[i].cells.length;j++){
+                            if(i==3){
+                                values.push(table.rows[i].cells[j].children[0].value);
+                                console.log(table.rows[i].cells[j].children[0].value);
+                            }
+                            
+                        }
                     }
-                };
-                    alert(c)
-                    xhttp.open("POST", "Sum", true);
-                    xhttp.send(c);
-                }*/
-            }
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                          document.getElementById("answer").innerHTML=this.response;
+                        }
+                    };
+                        var out='';
+                        for(i=0;i<values.length;i++){
+                            var s=i;
+                            if(i<values.length-1)
+                                out+=s+"="+values[i]+"&";
+                            else{
+                                out+=s+"="+values[i];
+                            }
+
+                        }
+                        console.log(out);
+                        xhttp.open("POST", "Sum", true);
+                        xhttp.send(out);
+                }
+            
             
             
             

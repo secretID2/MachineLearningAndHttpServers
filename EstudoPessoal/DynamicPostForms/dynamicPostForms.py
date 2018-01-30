@@ -25,7 +25,7 @@ def retDynamicForm():
     except:
         print("error no get")
     
-    out="<table id="input">"
+    out='<table id="input">'
     input_rows=['Attributes','Values']
     for row in input_rows:
         out+='<tr><th>'+str(row)+'</th></tr>'
@@ -37,10 +37,24 @@ def retDynamicForm():
     return out
 
 
-@bt.get('/Ola')
-def Fogo():
-    return bt.static_file('Ola.html',root='files/')
-
+@bt.get('/Sum',method='POST')
+def SUM():
+    values=[]
+    i=0
+    while(True):
+        if(bt.request.forms.get(str(i))!=None):
+            print("sum values:",bt.request.forms.get(str(i)))
+            values.append(bt.request.forms.get(str(i)))
+            
+        else:
+            print("All variables were obtain")
+            break
+        i+=1
+    Sum=0     
+    for v in values:
+        Sum+=int(v)
+    print("final sum:",Sum)
+    return str(Sum)
 
 
 
