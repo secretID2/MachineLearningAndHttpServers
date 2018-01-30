@@ -217,7 +217,7 @@ def Loading():
 @bt.get('/Prediction')
 def Predictor():
      global clients
-     global clients_run_threads
+     
      for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
@@ -234,6 +234,7 @@ def Predictor():
             output+="Original values:<br>"
             output+=np.array_str(data.iloc[:n,:].values)
             output+="<br><br>"
+            print("Ola:",data.iloc[0:1,:-1].values)
             for i in range(n):
                 output+="<br>Prediction for previous line:<br>"+np.array_str(data.iloc[i,:-1].values)+"->"+np.array_str(p.predict(data.iloc[i:i+1,:-1].values))
             return output
@@ -243,7 +244,7 @@ def Predictor():
 @bt.get('/InputPredict')
 def InputPredict():
     global clients
-    global clients_run_threads
+    
     for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
@@ -263,7 +264,31 @@ def InputPredict():
             out+='</table>'        
             return out
         
-        
+@bt.get('/Predict')
+def Predict():
+    values=[]
+    i=0
+    global clients
+    
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            while(True):
+                if(bt.request.forms.get(str(i))!=None):
+                    print("attribute values:",bt.request.forms.get(str(i)))
+                    values.append(bt.request.forms.get(str(i)))
+                    
+                else:
+                    print("All variables were obtain")
+                    break
+                
+            i+=1
+            p=clients[c].predictor
+            new_values=[values]
+            new_values=np.array(new_values)
+            print("Predict array:",new_values)
+            out=p.predict(new_values)
+            return str(out)        
 
         
 
