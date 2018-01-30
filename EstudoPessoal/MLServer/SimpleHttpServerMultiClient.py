@@ -249,7 +249,7 @@ def InputPredict():
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             print("Client:",c)
-            out='<table id="input">'
+            out='<table id="input_table">'
             input_rows=['Attributes','Values']
             for row in input_rows:
                 out+='<tr><th>'+str(row)+'</th></tr>'
@@ -264,7 +264,7 @@ def InputPredict():
             out+='</table>'        
             return out
         
-@bt.get('/Predict')
+@bt.get('/Predict',method='POST')
 def Predict():
     values=[]
     i=0
@@ -281,11 +281,13 @@ def Predict():
                 else:
                     print("All variables were obtain")
                     break
+                i+=1
                 
-            i+=1
+            
             p=clients[c].predictor
             new_values=[values]
             new_values=np.array(new_values)
+            new_values=new_values.astype(np.float)
             print("Predict array:",new_values)
             out=p.predict(new_values)
             return str(out)        

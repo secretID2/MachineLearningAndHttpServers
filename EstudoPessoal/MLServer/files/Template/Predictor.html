@@ -58,13 +58,35 @@
             }
             function Predict(){
                 var xhttp = new XMLHttpRequest();
+                var table=document.getElementById("input_table");
+                values=[];
+                for(i=0;i<table.rows.length;i++){
+                    for(j=0;j<table.rows[i].cells.length;j++){
+                        if(i==3){
+                            values.push(table.rows[i].cells[j].children[0].value);
+                            console.log(table.rows[i].cells[j].children[0].value);
+                        }
+
+                    }
+                }
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("answer").innerHTML=this.response;
                     }
                 };
-                xhttp.open("GET", "Predict", true);
-                xhttp.send();
+                var out='';
+                for(i=0;i<values.length;i++){
+                    var s=i;
+                    if(i<values.length-1)
+                        out+=s+"="+values[i]+"&";
+                    else{
+                        out+=s+"="+values[i];
+                    }
+
+                }
+                console.log(out);
+                xhttp.open("POST", "Predict", true);
+                xhttp.send(out);
             }
             
             
