@@ -11,13 +11,15 @@ from bottle.ext.websocket import GeventWebSocketServer
 from bottle.ext.websocket import websocket
 import threading
 import datetime
+import encryption
 
 #users = []
 #log=[]
 secret='nuncaVaodescobrr_ahah'
 chatRooms={}
 RoomUsers={}
-
+RoomLog={}
+encry=encryption.Encryption()
 
 class ChatRoom():
     
@@ -55,14 +57,21 @@ def createRoom():
     global secret
     global chatRooms
     global RoomUsers
+    global RoomLog
     roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
     #print(roomName,password)
     chatRooms[roomName]=password
-    users=[]
+    users={}
     RoomUsers[roomName]=users
-    ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
-    bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
+    #Initialization of room log
+    log=[]
+    RoomLog[roomName]=log
+    
+    ts = datetime.datetime.now()+datetime.timedelta(seconds=1)
+    encrypt_pass=encry.encrypt(password)
+    bt.response.set_cookie(roomName, encrypt_pass,path='/',expires=ts)
+    #bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
     #bt.response.set_cookie(roomName, password,path='/websocket',expires=ts, secret=secret)
     return bt.redirect('/'+roomName)
 
@@ -72,11 +81,14 @@ def accessRoom(roomName):
     global chatRooms
     #roomName = bt.request.forms.get('roomName')
     password = bt.request.forms.get('password')
+    
    #print(roomName)
     #print(password==chatRooms[roomName])
     if password==chatRooms[roomName]:
-        ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
-        bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
+        ts = datetime.datetime.now()+datetime.timedelta(seconds=1)
+        encrypt_pass=encry.encrypt(password)
+        bt.response.set_cookie(roomName, encrypt_pass,path='/',expires=ts)
+        #bt.response.set_cookie(roomName, password,path='/',expires=ts, secret=secret)
         #bt.response.set_cookie(roomName, password,path='/websocket',expires=ts, secret=secret)
         return bt.redirect('/'+roomName)
     else:
@@ -88,11 +100,60 @@ def enterRoom(roomName):
     global secret
     global chatRooms
 
-    key = bt.request.get_cookie(roomName, secret=secret)
+    key = bt.request.get_cookie(roomName)
     #print(key)
-    if key==chatRooms[roomName]:
+    password=encry.decrypt(key)
+    #print(password)
+    if password==chatRooms[roomName]:
+        #ts = datetime.datetime.now()+datetime.timedelta(minutes=1)
+        #bt.response.set_cookie(roomName, key,path='/',expires=ts, secret=secret)
         return bt.static_file('chat.html',root='files/')
     return 'Not Allowed in this Room!'
+
+
+def getRoomName(msg):
+    cookie=msg.split(';')[0]
+    roomName=cookie.split('=')[0]
+    return roomName
+
+
+def getPassword(msg):
+    cookie=msg.split(';')[0]
+    password=cookie.split('=')[1]
+    return password
+
+def getMsg(msg):
+    menssage=msg.split(';')[1]
+    return menssage
+
+
+
+def ValidateWebsocketConnection(msg):
+    global chatRooms
+    cookie=msg.split(';')[0]
+    roomName=cookie.split('=')[0]
+    password=cookie.split('=')[1]
+    #print("\n\n",roomName,password)
+    password=encry.decrypt(password)
+    if password==chatRooms[roomName]:
+        return True
+    else:
+        return False
+
+
+def SeeWhoDisconnected(ws):
+    global RoomUsers
+    for room in RoomUsers:
+        users=RoomUsers[room]
+        try:
+            print("Deleting",users[ws])
+            del users[ws]
+            break
+        except:
+            print("wrong room!->",room)
+            continue
+            
+
 
 @get('/websocket', apply=[websocket])
 def chat(ws):
@@ -100,26 +161,12 @@ def chat(ws):
     global secret
     global chatRooms
     global RoomUsers
+    global RoomLog
 #    print("Websocket")
        
     if(ws!=None):
-        for room_name in chatRooms:
-            key = bt.request.get_cookie(room_name, secret=secret)
-            print(room_name,key)
-            if key:
-                
-                #room=room_name
-                break
-            #if key==chatRooms[room_name]:
-                #Valid user
-                #print('pass here')
-        print(room_name)
-        users=RoomUsers[room_name]
-        users.append(ws)
-        RoomUsers[room_name]=users
-                
-                    
-                    
+       
+        first_time=1       
         #Send conversation to new client
         
         ###################################
@@ -127,17 +174,47 @@ def chat(ws):
         while True:
             msg = ws.receive()
             print("received msg:",msg)
-            
             if msg is not None:
+                #Validate User
+                
+                
+#               if(ValidateWebsocketConnection(msg)):
+                room_name=getRoomName(msg)
                 users= RoomUsers[room_name]
+                RoomUsers[room_name]=users
+                msg=getMsg(msg)
+                #First time user enters it receives log and is added to room users
+                if first_time==1:
+                    
+                    users[ws]=ws
+                    room_log=RoomLog[room_name]
+                    #if is not empty
+                    if room_log:
+                        for log in room_log:
+                            try:
+                                users[ws].send(log)
+                            except:
+                                print("Error sending log")
+                    first_time+=1
+                #After first time we need to regist the conversation    
+                else:
+                    log=RoomLog[room_name]
+                    log.append(msg)
+                    RoomLog[room_name]=log
+                
                 for u in users:
                     try:
-                        u.send(msg)
+                        users[u].send(msg)
                     except:
                         print("error sending message")
                         pass
+#                else:
+#                    print('User not valid to use websocket')
+
             else:
                 #Close websocket
+                print("Closing",ws)
+                SeeWhoDisconnected(ws)
                 break
             ##################################
        
