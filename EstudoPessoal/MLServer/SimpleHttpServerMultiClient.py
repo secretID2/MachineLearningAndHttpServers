@@ -179,10 +179,13 @@ def signUp():
 @bt.get('/restricted')
 def restricted_area():
     global secret
-    if validate_user(secret=secret):
-        return bt.static_file("upload_dataset.html",root="files/Template")
-    else:
-        return "You are not logged in. Access denied."
+    global clients
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            return bt.template("upload_dataset",user_name=c)
+    
+    return "You are not logged in. Access denied."
     
     
     

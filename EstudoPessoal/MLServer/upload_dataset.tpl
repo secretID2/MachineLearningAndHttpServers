@@ -1,4 +1,5 @@
-<text style="cursor:pointer; color:blue; text-decoration:underline" onclick="logout()">Log Out</text><br>
+<h1>Hi {{user_name}}</h1>
+<text style="cursor:pointer; color:blue; text-decoration:underline" onclick="logout()">Log Out</text><br><br>
 <form action="/upload" method="post" enctype="multipart/form-data">
   Split Character: <input type="text" name="split" value="," />
   Select a file: <input type="file" name="upload" />
