@@ -1,6 +1,15 @@
+<text style="cursor:pointer; color:blue; text-decoration:underline" onclick="logout()">Log Out</text>
 <form action="/upload" method="post" enctype="multipart/form-data">
   Split Character: <input type="text" name="split" value="," />
   Select a file: <input type="file" name="upload" />
   url:      <input type="text" name="url" />
   <input type="submit" value="Start upload" />
 </form>
+<script>
+function logout(){
+    //Remove all cookies
+    
+    window.location('/');
+    
+}
+</script>   
