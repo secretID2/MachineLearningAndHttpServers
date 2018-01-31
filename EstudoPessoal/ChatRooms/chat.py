@@ -109,37 +109,39 @@ def chat(ws):
             if key:
                 
                 #room=room_name
-                break
-            #if key==chatRooms[room_name]:
+                
+                #if key==chatRooms[room_name]:
                 #Valid user
                 #print('pass here')
-        print(room_name)
-        users=RoomUsers[room_name]
-        users.append(ws)
-        RoomUsers[room_name]=users
+                print(room_name)
+                users=RoomUsers[room_name]
+                users.append(ws)
+                RoomUsers[room_name]=users
+                        
+                            
+                            
+                #Send conversation to new client
                 
+                ###################################
+                #Receive and send messages
+                while True:
+                    msg = ws.receive()
+                    print("received msg:",msg)
                     
-                    
-        #Send conversation to new client
+                    if msg is not None:
+                        users= RoomUsers[room_name]
+                        for u in users:
+                            try:
+                                u.send(msg)
+                            except:
+                                print("error sending message")
+                                pass
+                    else:
+                        #Close websocket
+                        break
+                    ##################################
+          
         
-        ###################################
-        #Receive and send messages
-        while True:
-            msg = ws.receive()
-            print("received msg:",msg)
-            
-            if msg is not None:
-                users= RoomUsers[room_name]
-                for u in users:
-                    try:
-                        u.send(msg)
-                    except:
-                        print("error sending message")
-                        pass
-            else:
-                #Close websocket
-                break
-            ##################################
        
     else:
         print("Someone call /websocket without websocket")
