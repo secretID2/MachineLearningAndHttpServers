@@ -32,7 +32,7 @@ window.location=file;
 
 }
 function logout(text){
-	document.cookie="{{User}}=;"//expires='Wed 01 Jan 1970'";
+	document.cookie="{{User}}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;";
 	window.location="/";
 }
 </script>
