@@ -43,7 +43,7 @@ class Predictor:
         for i in range(len(dataset.dtypes)):
             if dataset.dtypes[i]==object:
                 v=dataset.iloc[:,i].values
-                print(v)
+                #print(v)
                 v=self.categoricalToNumeric(v)
                 dataset.iloc[:,i]=v
         
@@ -58,7 +58,7 @@ class Predictor:
         class_index=dataset.shape[1]-1
         #Shuffle data
         dataset=dataset.sample(frac=1,random_state=seed)
-        print(dataset.head)
+        #print(dataset.head)
         self.loading=str(5)+'%'
         
          #Turn all columns of atributes that have string categorical values to numbers

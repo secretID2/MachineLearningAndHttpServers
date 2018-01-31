@@ -268,7 +268,7 @@ def Predictor():
             output+="Original values:<br>"
             output+=np.array_str(data.iloc[:n,:].values)
             output+="<br><br>"
-            print("Ola:",data.iloc[0:1,:-1].values)
+            #print("Ola:",data.iloc[0:1,:-1].values)
             for i in range(n):
                 output+="<br>Prediction for previous line:<br>"+np.array_str(data.iloc[i,:-1].values)+"->"+np.array_str(p.predict(data.iloc[i:i+1,:-1].values))
             return output
@@ -282,7 +282,7 @@ def InputPredict():
     for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
-            print("Client:",c)
+            #print("Client:",c)
             out='<table id="input_table">'
             input_rows=['Attributes','Values']
             for row in input_rows:

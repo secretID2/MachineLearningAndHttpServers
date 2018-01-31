@@ -8,7 +8,7 @@
         <div id="Examples" style="display:none;">
             <p id="print">
             </p>
-            <button onclick="loadXMLDoc()">New Examples</button>
+            <button onclick="Main()">New Examples</button>
         </div>
         <br>
         --------------------------
@@ -48,9 +48,16 @@
             }
             function getInputTable(){
                 var xhttp = new XMLHttpRequest();
+                var ok=false;
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("input").innerHTML=this.response;
+                        ok=true;
+                    }else{
+                        if(this.status==500){
+                            //do request again
+                            getInputTable();
+                        }
                     }
                 };
                 xhttp.open("GET", "InputPredict", true);
