@@ -47,7 +47,7 @@ class Client:
         #save_path='files/Template'
         upload.save(save_path, overwrite=True) # appends upload.filename automatically
         print("\n\nbefore\n\n")
-        self.dataset=pd.read_csv(save_path+upload.filename,delimiter=split_caracter )
+        self.dataset=pd.read_csv(save_path+upload.filename,delimiter=split_caracter ,header=None)
         print("\n\nAfter\n\n")
         
         
