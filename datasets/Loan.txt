@@ -36,3 +36,4 @@
 27,No,12000,Loan
 21,Yes,12000,Loan
 80,No,20000,Not_Loan
+22,Yes,15000,Loan
